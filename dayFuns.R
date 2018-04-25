@@ -22,7 +22,7 @@ function(page, pageNum = as.integer(xmlGetAttr(page, "number")))
 
 
     numCols = sapply(cells, length)
-    cols = lapply(1:max(numCols), function(i) sapply(lapply(cells, `[[`, i), xmlValue))
+    cols = lapply(1:max(numCols), function(i) lapply(lapply(cells, `[[`, i), xmlValue))
     df = as.data.frame(do.call(cbind, cols))
 
     if(pageNum == 1) {
@@ -31,4 +31,13 @@ function(page, pageNum = as.integer(xmlGetAttr(page, "number")))
     }
 
     df
+}
+
+
+getDocTables =
+function(file, doc = readPDFXML(file))
+{
+    tbls = lapply(doc, getPage)
+    tbls[-1] = lapply(tbls[-1], function(x) { names(x) = names(tbls[[1]]); x})
+    do.call(rbind, tbls)
 }

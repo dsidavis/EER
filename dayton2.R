@@ -4,10 +4,22 @@ invisible(lapply(list.files("../ReadPDF/R", pattern = "\\.R$", full = TRUE), bas
 source("dayFuns.R")
 
 f = "2014-02-03_Dayton_Power_&_Light.xml"
+ans = getDocTables(f)
+
+
+
+
+
+
+
+if(FALSE) {
 doc = readPDFXML(f)
 tbls = lapply(doc, getPage)
 
 sapply(tbls, class)
-sapply(tbls, nrow)
-
+nsapply(tbls, nrow)
 sapply(tbls, ncol) # Problems.
+tbls[-1] = lapply(tbls[-1], function(x) { names(x) = names(tbls[[1]]); x})
+}
+
+
