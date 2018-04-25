@@ -1,5 +1,25 @@
+cellContents =
+function(nodes, col = NA)
+{        
+  lapply(nodes, xmlValue)    
+}
+
 getPage =
-function(page, pageNum = as.integer(xmlGetAttr(page, "number")))
+    #
+    # Process a page into a data frame.
+    #  If pageNum = 1, we get the names of the columns, discard the text above the table.
+    #  Otherwise, we currently assume the text of the page is all of the table.
+    #
+    # The strategy is to find the non-black lines on the page. These are the horizontal and vertical
+    # lines in the table - not those underlining the text in the regular part of the page.
+    # We are only interested in the horizontal and vertical lines.
+    #
+    # We divide the text nodes first into rows, and then into columns. We identfy the rows and columns
+    # via the vertical lines  we extracted/identified earlier, i.e. the gray horizontal and vertical lines.
+    #
+    #
+    #
+function(page, cellFun = cellContents,  pageNum = as.integer(xmlGetAttr(page, "number")))
 {    
     rr = getNodeSet(page, ".//line[not(@stroke.color = '0,0,0')]")
     bb = getBBox(rr)
@@ -22,7 +42,8 @@ function(page, pageNum = as.integer(xmlGetAttr(page, "number")))
 
 
     numCols = sapply(cells, length)
-    cols = lapply(1:max(numCols), function(i) lapply(lapply(cells, `[[`, i), xmlValue))
+      # allow the caller specify a flexible function to process each cell
+    cols = lapply(1:max(numCols), function(i) cellFun(lapply(cells, `[[`, i), i))
     df = as.data.frame(do.call(cbind, cols))
 
     if(pageNum == 1) {
@@ -35,9 +56,9 @@ function(page, pageNum = as.integer(xmlGetAttr(page, "number")))
 
 
 getDocTables =
-function(file, doc = readPDFXML(file))
+function(file, cellFun = cellContents, doc = readPDFXML(file))
 {
-    tbls = lapply(doc, getPage)
+    tbls = lapply(doc, getPage, cellFun = cellFun)
     tbls[-1] = lapply(tbls[-1], function(x) { names(x) = names(tbls[[1]]); x})
     do.call(rbind, tbls)
 }

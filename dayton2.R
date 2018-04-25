@@ -7,6 +7,10 @@ f = "2014-02-03_Dayton_Power_&_Light.xml"
 ans = getDocTables(f)
 
 
+ans$CompanyName = sapply(ans[[1]], `[[`, 1)
+
+
+
 
 
 
