@@ -21,8 +21,8 @@ The key is
 ans = getDocTables("2014-02-03_Dayton_Power_&_Light.xml")
 ```
 We converted the PDF to XML using the (extended) version of pdftohtml.
-(I think we need this to get the lines and rectangles, but I can't recall what changes we have made
-to the original.)
+(I think we need this versin to get the lines and rectangles, but I can't recall what changes we have made
+to the original pdftohtml.)
 
 
 The result in `ans` is a data.frame.
@@ -53,7 +53,7 @@ in dayFuns.R.   There are two functions: getDocTables() and getPage().
 getPage() processes an individual page. This returns a data frame for the table
 on that page.
 
-getDocTables() is the highlevel  function that process an entire document
+getDocTables() is the highlevel  function that processes an entire document
 given a file name - the converted XML document.
 It processes each page via getPage(). It also assembles the result into a single data frame.
 
@@ -77,6 +77,25 @@ data frame as
 ```
 ans$CompanyName = apply(ans[[1]], `[[`, 1)
 ```
+
+
+## Note
+Looking at the 3rd column "Contract Term",
+I notice that the penultimate element is
+```
+$`(475,562]`
+[1] "Through May 2014 Enroll only online at"
+```
+The "Enroll only online at" is erroneously here and should be in the 
+next (4th) column.
+This is in the XML as a single <text> element.
+In the PDF, we have
+```
+[(Thr)4.9(ough May 2014)-696.9(Enr)4.9(o)-.2(ll only onli)7.1(n)-.2(e )-8.2(at)]TJ
+```
+So there is a spacing between the 2014 and Enr
+
+We can endeavor to fix this in pdftohtml.
 
 
 # Convert to DOCX
