@@ -7,9 +7,9 @@ page = doc[[2]]
 #rr = getNodeSet(page, ".//rect")
 
 
-hor = getHLines(page)
+hor = getLines(page)
 plot(page)
 abline(h = dim(page)[2] - hor$y0, col = "red")
 
-vert = getHLines(page, horiz = FALSE)
+vert = getLines(page, horiz = FALSE)
 abline(v = unique(vert$x0), col = "red")
